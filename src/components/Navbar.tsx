@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Menu, X, Phone } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import logo from "@/assets/logo.png";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,9 +18,12 @@ const Navbar = () => {
     <nav className="fixed top-0 w-full bg-background/95 backdrop-blur-sm border-b border-border z-50 shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-2">
-            <Phone className="h-6 w-6 text-primary" />
-            <span className="font-bold text-lg text-foreground">Tous Tech</span>
+          <div className="flex items-center gap-3">
+            <img src={logo} alt="Tous Tech Logo" className="h-10 w-10" />
+            <div className="flex flex-col">
+              <span className="font-bold text-lg text-foreground leading-tight">Tous Tech</span>
+              <span className="text-xs text-muted-foreground leading-tight">Services & Solutions</span>
+            </div>
           </div>
 
           {/* Desktop Navigation */}
