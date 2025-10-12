@@ -22,19 +22,19 @@ const Footer = () => {
             <div className="space-y-3 text-background/80">
               <div className="flex items-center gap-2">
                 <Mail className="h-4 w-4" />
-                <a href="mailto:contact@tous-tech.com" className="hover:text-primary transition-colors">
-                  contact@tous-tech.com
+                <a href="mailto:toustechservicesetsolutions@gmail.com" className="hover:text-primary transition-colors">
+                  toustechservicesetsolutions@gmail.com
                 </a>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="h-4 w-4" />
-                <a href="tel:+221XXXXXXXXX" className="hover:text-primary transition-colors">
-                  +221 XX XXX XX XX
+                <a href="tel:+221774938150" className="hover:text-primary transition-colors">
+                  +221 77 493 81 50
                 </a>
               </div>
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4" />
-                <span>Dakar, Sénégal</span>
+                <span>Dakar, Pikine</span>
               </div>
             </div>
           </div>
