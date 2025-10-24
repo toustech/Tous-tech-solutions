@@ -1,7 +1,11 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-voip.jpg";
+import QuoteDialog from "@/components/QuoteDialog";
 
 const Hero = () => {
+  const [quoteDialogOpen, setQuoteDialogOpen] = useState(false);
+  
   const scrollToContact = () => {
     const element = document.getElementById("contact");
     if (element) {
@@ -31,7 +35,7 @@ const Hero = () => {
           <div className="flex flex-col sm:flex-row gap-4">
             <Button
               size="lg"
-              onClick={scrollToContact}
+              onClick={() => setQuoteDialogOpen(true)}
               className="bg-white text-primary hover:bg-white/90 shadow-lg text-lg px-8 py-6"
             >
               Demander un devis gratuit
@@ -47,6 +51,7 @@ const Hero = () => {
           </div>
         </div>
       </div>
+      <QuoteDialog open={quoteDialogOpen} onOpenChange={setQuoteDialogOpen} />
     </section>
   );
 };

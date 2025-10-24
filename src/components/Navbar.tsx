@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
+import QuoteDialog from "@/components/QuoteDialog";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [quoteDialogOpen, setQuoteDialogOpen] = useState(false);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -52,7 +54,7 @@ const Navbar = () => {
             >
               Contact
             </button>
-            <Button onClick={() => scrollToSection("contact")}>
+            <Button onClick={() => setQuoteDialogOpen(true)}>
               Demander un devis
             </Button>
           </div>
@@ -94,13 +96,14 @@ const Navbar = () => {
               >
                 Contact
               </button>
-              <Button onClick={() => scrollToSection("contact")} className="w-full">
+              <Button onClick={() => setQuoteDialogOpen(true)} className="w-full">
                 Demander un devis
               </Button>
             </div>
           </div>
         )}
       </div>
+      <QuoteDialog open={quoteDialogOpen} onOpenChange={setQuoteDialogOpen} />
     </nav>
   );
 };
