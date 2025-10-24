@@ -1,55 +1,10 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mail, Phone, MapPin } from "lucide-react";
-import { toast } from "sonner";
-import { z } from "zod";
-
-const contactSchema = z.object({
-  name: z.string().trim().min(2, "Le nom doit contenir au moins 2 caractères").max(100),
-  email: z.string().trim().email("Email invalide").max(255),
-  phone: z.string().trim().min(8, "Numéro invalide").max(20),
-  message: z.string().trim().min(10, "Le message doit contenir au moins 10 caractères").max(1000),
-});
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    message: "",
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      const validated = contactSchema.parse(formData);
-      
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast.success("Message envoyé avec succès!", {
-        description: "Nous vous répondrons dans les plus brefs délais.",
-      });
-      
-      setFormData({ name: "", email: "", phone: "", message: "" });
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        toast.error("Erreur de validation", {
-          description: error.errors[0].message,
-        });
-      } else {
-        toast.error("Erreur lors de l'envoi du message");
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <section id="contact" className="py-20 bg-secondary">
@@ -114,17 +69,16 @@ const Contact = () => {
 
           <Card className="animate-fade-in" style={{ animationDelay: "0.1s" }}>
             <CardContent className="p-6">
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form action="https://formspree.io/f/mvgwewdo" method="POST" className="space-y-4">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
                     Nom complet *
                   </label>
                   <Input
                     id="name"
+                    name="name"
                     type="text"
                     placeholder="Votre nom"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
                     maxLength={100}
                   />
@@ -136,10 +90,9 @@ const Contact = () => {
                   </label>
                   <Input
                     id="email"
+                    name="email"
                     type="email"
                     placeholder="votre@email.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
                     maxLength={255}
                   />
@@ -151,10 +104,9 @@ const Contact = () => {
                   </label>
                   <Input
                     id="phone"
+                    name="phone"
                     type="tel"
                     placeholder="+221 XX XXX XX XX"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     required
                     maxLength={20}
                   />
@@ -166,17 +118,16 @@ const Contact = () => {
                   </label>
                   <Textarea
                     id="message"
+                    name="message"
                     placeholder="Décrivez votre projet..."
-                    value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     required
                     maxLength={1000}
                     rows={5}
                   />
                 </div>
 
-                <Button type="submit" className="w-full" disabled={isSubmitting}>
-                  {isSubmitting ? "Envoi en cours..." : "Envoyer le message"}
+                <Button type="submit" className="w-full">
+                  Envoyer le message
                 </Button>
               </form>
             </CardContent>
