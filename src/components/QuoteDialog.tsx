@@ -1,8 +1,3 @@
-import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -15,86 +10,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
-const quoteSchema = z.object({
-  lineType: z.enum(["analog", "digital"], {
-    required_error: "Veuillez sélectionner le type de ligne",
-  }),
-  ipPhoneCount: z.coerce
-    .number()
-    .min(0, "Le nombre doit être positif")
-    .max(1000, "Le nombre est trop élevé"),
-  analogPhoneCount: z.coerce
-    .number()
-    .min(0, "Le nombre doit être positif")
-    .max(1000, "Le nombre est trop élevé"),
-  existingPabx: z.string().trim().max(200, "Maximum 200 caractères"),
-  contactName: z
-    .string()
-    .trim()
-    .min(1, "Le nom est requis")
-    .max(100, "Maximum 100 caractères"),
-  contactEmail: z
-    .string()
-    .trim()
-    .email("Email invalide")
-    .max(255, "Maximum 255 caractères"),
-  contactPhone: z
-    .string()
-    .trim()
-    .min(1, "Le téléphone est requis")
-    .max(50, "Maximum 50 caractères"),
-});
-
-type QuoteFormData = z.infer<typeof quoteSchema>;
-
 interface QuoteDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 const QuoteDialog = ({ open, onOpenChange }: QuoteDialogProps) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    setValue,
-    watch,
-  } = useForm<QuoteFormData>({
-    resolver: zodResolver(quoteSchema),
-    defaultValues: {
-      ipPhoneCount: 0,
-      analogPhoneCount: 0,
-      existingPabx: "",
-    },
-  });
-
-  const lineType = watch("lineType");
-
-  const onSubmit = async (data: QuoteFormData) => {
-    setIsSubmitting(true);
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      console.log("Demande de devis:", data);
-      
-      toast.success("Demande de devis envoyée avec succès !", {
-        description: "Nous vous contacterons dans les plus brefs délais.",
-      });
-      
-      reset();
-      onOpenChange(false);
-    } catch (error) {
-      toast.error("Erreur lors de l'envoi de la demande", {
-        description: "Veuillez réessayer ou nous contacter directement.",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -106,33 +27,26 @@ const QuoteDialog = ({ open, onOpenChange }: QuoteDialogProps) => {
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-4">
+        <form action="https://formspree.io/f/mvgwewdo" method="POST" className="space-y-6 mt-4">
           {/* Type de ligne existante */}
           <div className="space-y-3">
             <Label className="text-base font-semibold">
               Votre ligne existante est-elle analogique ? *
             </Label>
-            <RadioGroup
-              value={lineType}
-              onValueChange={(value) => setValue("lineType", value as "analog" | "digital")}
-              className="flex gap-4"
-            >
+            <div className="flex gap-4">
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="analog" id="analog" />
+                <input type="radio" id="analog" name="lineType" value="Oui (Analogique)" required className="h-4 w-4" />
                 <Label htmlFor="analog" className="font-normal cursor-pointer">
                   Oui (Analogique)
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="digital" id="digital" />
+                <input type="radio" id="digital" name="lineType" value="Non (Numérique/IP)" required className="h-4 w-4" />
                 <Label htmlFor="digital" className="font-normal cursor-pointer">
                   Non (Numérique/IP)
                 </Label>
               </div>
-            </RadioGroup>
-            {errors.lineType && (
-              <p className="text-sm text-destructive">{errors.lineType.message}</p>
-            )}
+            </div>
           </div>
 
           {/* Nombre de téléphones IP */}
@@ -142,15 +56,13 @@ const QuoteDialog = ({ open, onOpenChange }: QuoteDialogProps) => {
             </Label>
             <Input
               id="ipPhoneCount"
+              name="ipPhoneCount"
               type="number"
               min="0"
-              {...register("ipPhoneCount")}
+              max="1000"
               placeholder="Ex: 10"
-              className={errors.ipPhoneCount ? "border-destructive" : ""}
+              required
             />
-            {errors.ipPhoneCount && (
-              <p className="text-sm text-destructive">{errors.ipPhoneCount.message}</p>
-            )}
           </div>
 
           {/* Nombre de téléphones analogiques */}
@@ -160,15 +72,13 @@ const QuoteDialog = ({ open, onOpenChange }: QuoteDialogProps) => {
             </Label>
             <Input
               id="analogPhoneCount"
+              name="analogPhoneCount"
               type="number"
               min="0"
-              {...register("analogPhoneCount")}
+              max="1000"
               placeholder="Ex: 5"
-              className={errors.analogPhoneCount ? "border-destructive" : ""}
+              required
             />
-            {errors.analogPhoneCount && (
-              <p className="text-sm text-destructive">{errors.analogPhoneCount.message}</p>
-            )}
           </div>
 
           {/* PABX existant */}
@@ -178,13 +88,10 @@ const QuoteDialog = ({ open, onOpenChange }: QuoteDialogProps) => {
             </Label>
             <Input
               id="existingPabx"
-              {...register("existingPabx")}
+              name="existingPabx"
               placeholder="Ex: Yeastar S100, Grandstream UCM6204, Aucun..."
-              className={errors.existingPabx ? "border-destructive" : ""}
+              maxLength={200}
             />
-            {errors.existingPabx && (
-              <p className="text-sm text-destructive">{errors.existingPabx.message}</p>
-            )}
           </div>
 
           {/* Informations de contact */}
@@ -198,13 +105,11 @@ const QuoteDialog = ({ open, onOpenChange }: QuoteDialogProps) => {
                 </Label>
                 <Input
                   id="contactName"
-                  {...register("contactName")}
+                  name="contactName"
                   placeholder="Votre nom"
-                  className={errors.contactName ? "border-destructive" : ""}
+                  required
+                  maxLength={100}
                 />
-                {errors.contactName && (
-                  <p className="text-sm text-destructive">{errors.contactName.message}</p>
-                )}
               </div>
 
               <div className="space-y-2">
@@ -213,14 +118,12 @@ const QuoteDialog = ({ open, onOpenChange }: QuoteDialogProps) => {
                 </Label>
                 <Input
                   id="contactEmail"
+                  name="contactEmail"
                   type="email"
-                  {...register("contactEmail")}
                   placeholder="votre.email@exemple.com"
-                  className={errors.contactEmail ? "border-destructive" : ""}
+                  required
+                  maxLength={255}
                 />
-                {errors.contactEmail && (
-                  <p className="text-sm text-destructive">{errors.contactEmail.message}</p>
-                )}
               </div>
 
               <div className="space-y-2">
@@ -229,14 +132,12 @@ const QuoteDialog = ({ open, onOpenChange }: QuoteDialogProps) => {
                 </Label>
                 <Input
                   id="contactPhone"
+                  name="contactPhone"
                   type="tel"
-                  {...register("contactPhone")}
                   placeholder="Ex: +221 77 123 45 67"
-                  className={errors.contactPhone ? "border-destructive" : ""}
+                  required
+                  maxLength={50}
                 />
-                {errors.contactPhone && (
-                  <p className="text-sm text-destructive">{errors.contactPhone.message}</p>
-                )}
               </div>
             </div>
           </div>
@@ -246,13 +147,12 @@ const QuoteDialog = ({ open, onOpenChange }: QuoteDialogProps) => {
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              disabled={isSubmitting}
               className="flex-1"
             >
               Annuler
             </Button>
-            <Button type="submit" disabled={isSubmitting} className="flex-1">
-              {isSubmitting ? "Envoi en cours..." : "Envoyer la demande"}
+            <Button type="submit" className="flex-1">
+              Envoyer la demande
             </Button>
           </div>
         </form>
